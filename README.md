@@ -1,101 +1,187 @@
-# Spam Email Classification System
 
-A production-grade machine learning system designed to robustly classify emails as "Spam" or "Ham" (legitimate). This project features a modular pipeline architecture for training and inference, integrated with a modern Streamlit user interface for easy interaction.
+# 📧 Spam Email Detection System using Machine Learning
+
+A **production-grade machine learning system** designed to accurately classify emails as **Spam** or **Ham (legitimate)**.
+The project follows a **modular pipeline architecture** for training and prediction and includes an **interactive Streamlit web application** for real-time usage.
+
+---
+
+## 📌 Project Overview
+
+Email spam is a major cybersecurity and productivity concern. This project addresses the problem by building an automated spam detection system using **Natural Language Processing (NLP)** and **Machine Learning** techniques.
+
+The system is trained on a subset of the **Enron Email Dataset**, one of the most widely used real-world datasets for email classification research.
+
+---
+
+## 🎯 Objectives
+
+* To preprocess and analyze real-world email data
+* To build and evaluate multiple machine learning models
+* To select the best-performing model using evaluation metrics
+* To provide a user-friendly web interface for email classification
+* To support both **single email prediction** and **bulk email (MBOX) processing**
+
+---
 
 ## 🚀 Key Features
 
-- **Advanced ML Pipeline**: Modular design separating data ingestion, transformation, and model training.
-- **Multiple Model Support**: evaluation of various algorithms including SVM, Logistic Regression, Decision Trees, and Random Forest.
-- **Interactive Web UI**: Built with Streamlit for real-time single-email analysis and batch processing.
-- **MBOX Support**: Native capability to process and classify entire `mbox` email archives.
-- **Detailed Analytics**: Comprehensive logging and performance metrics (Precision, Recall, F1-Score).
+* ✅ Modular ML pipeline (Data Ingestion → Transformation → Training → Prediction)
+* ✅ Multiple models (SVM, Logistic Regression, Decision Tree, KNN, Random Forest)
+* ✅ TF-IDF based text feature extraction
+* ✅ Automatic best model selection using F1-score
+* ✅ Streamlit web app for real-time interaction
+* ✅ Batch processing of `.mbox` email files
+* ✅ Detailed logs and performance metrics
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Language**: Python 3.10+
-- **Frontend**: Streamlit
-- **ML Framework**: Scikit-learn
-- **Data Processing**: Pandas, NumPy, BeautifulSoup4
-- **Project Management**: `uv` (recommended) or `pip`
+| Category             | Technology          |
+| -------------------- | ------------------- |
+| Programming Language | Python 3.10+        |
+| Frontend             | Streamlit           |
+| Machine Learning     | Scikit-learn        |
+| NLP                  | TF-IDF Vectorizer   |
+| Data Handling        | Pandas, NumPy       |
+| Dataset              | Enron Email Dataset |
+| Version Control      | Git & GitHub        |
+
+---
 
 ## 📂 Project Structure
 
 ```
-├── app.py                  # Main Streamlit Web Application
-├── requirements.txt        # Project dependencies
-├── main.py                 # (Optional) Alternative entry point
+Spam-Email-Detection/
+│
+├── app.py                     # Streamlit web application
+├── requirements.txt           # Project dependencies
+├── README.md                  # Project documentation
+│
 ├── src/
-│   ├── components/         # Core processing modules (Ingestion, Transformation)
-│   ├── pipeline/           # Orchestration pipelines (Training, Prediction)
-│   ├── config/             # Configuration and parameters
-│   └── utils/              # Helper functions, logging, and state management
-├── data/                   # Dataset storage (inputs)
-├── outputs/                # Training artifacts (models, vectorizers)
-└── logs/                   # System runtime logs
+│   ├── components/            # Data ingestion, transformation, training modules
+│   ├── pipeline/              # Training & prediction pipelines
+│   ├── config/                # Configuration files
+│   └── utils/                 # Utility functions (logging, text cleaning)
+│
+├── data/
+│   └── dataset/               # Email datasets (CSV / MBOX)
+│
+├── outputs/                   # Trained models & vectorizers
+├── logs/                      # Execution logs
+└── .gitignore
 ```
 
-## ⚡ Installation
+---
 
-1. **Clone the Repository**
-   ```bash
-   git clone <repository_url>
-   cd Spam-Email-Detection
-   ```
+## ⚙️ Installation & Setup
 
-2. **Set up Environment**
-   It is recommended to use a virtual environment.
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   ```
+### 1️⃣ Clone the Repository
 
-3. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+git clone https://github.com/Praneethvarma80022/email-spam-detection.git
+cd Spam-Email-Detection
+```
 
-## 🖥️ Usage
+---
 
-### 1. Running the Web Application
-Launch the interactive dashboard to classify emails instantly.
+### 2️⃣ Create Virtual Environment
+
+```bash
+python -m venv .venv
+```
+
+Activate:
+
+**Windows**
+
+```bash
+.\.venv\Scripts\Activate.ps1
+```
+
+---
+
+### 3️⃣ Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🧠 Model Training
+
+To train the machine learning models from scratch:
+
+```bash
+python -m src.pipeline.training_pipeline
+```
+
+This will:
+
+* Train multiple ML models
+* Perform cross-validation
+* Select the best model
+* Save the trained model and TF-IDF vectorizer in `outputs/`
+
+---
+
+## 🖥️ Running the Web Application
+
+Start the Streamlit app:
 
 ```bash
 streamlit run app.py
 ```
 
-- **Single Email Tab**: Paste email content to get an immediate Spam/Ham prediction with a confidence score.
-- **Batch Processing Tab**: Upload an `.mbox` file to process multiple emails at once and download the results as a CSV.
+### Available Modes
 
-### 2. Training the Model
-(Optional) If you wish to retrain the models on new data:
+* **Single Email Classification** – Paste email text and classify instantly
+* **Batch MBOX Processing** – Upload `.mbox` file and download prediction results
 
-1. Place your dataset in `data/dataset/dataset.csv`.
-2. Run the training pipeline:
-   ```bash
-   python -m src.pipeline.training_pipeline
-   ```
-3. Artifacts (Model & Vectorizer) will be saved in the `outputs/` directory.
-4. **Important**: Update `src/config/config.py` with the new paths to your generated model and vectorizer if they change.
+---
 
-## ⚙️ Configuration
+## 📊 Model Evaluation Metrics
 
-The system is highly configurable via `src/config/config.py`. You can adjust:
-- Model hyperparameters (Grid Search configuration)
-- Input/Output paths
-- Training parameters (Cross-validation folds, etc.)
+The system evaluates models using:
 
-## 📊 Model Performance
+* Accuracy
+* Precision
+* Recall
+* F1-Score
 
-The pipeline automatically evaluates models using 5-fold cross-validation. Metrics including Accuracy, Precision, Recall, and F1-Score are logged for each experiment. By default, the system selects the best performing model (often SVM or Random Forest) for inference.
+The best model is automatically selected based on **F1-Score**, which is ideal for imbalanced datasets like spam detection.
 
-## 🤝 Contributing
+---
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## 📁 Dataset Information
 
-## 📝 License
+* **Dataset Used**: Enron Email Dataset
+* **Description**: Email communications of ~150 employees from the Enron corporation
+* **Usage**: A cleaned and preprocessed subset is used for training and testing
 
-Distributed under the MIT License. See `LICENSE` for more information.
+---
+
+## 📌 Future Enhancements
+
+* Deep Learning models (LSTM, BERT)
+* Real-time email client integration
+* Multilingual spam detection
+* Deployment using Docker / Cloud platforms
+* Model explainability (SHAP, LIME)
+
+---
+
+## 📜 License
+
+This project is developed for **academic purposes** and is distributed under the **MIT License**.
+
+---
+
+## 👨‍🎓 Author
+
+**Mudunuri Naga Kali Praneeth Varma**
+Final Year B.Tech Project
+Spam Email Detection using Machine Learning
+
