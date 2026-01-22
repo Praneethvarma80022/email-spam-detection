@@ -8,7 +8,6 @@ import random
 from datetime import datetime, timedelta
 from src.pipeline.prediction_pipeline import PredictionPipeline
 
-# --- PAGE CONFIG ---
 st.set_page_config(
     page_title="SpamGuard AI",
     page_icon="🛡️",
@@ -16,11 +15,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- FILE CONSTANTS ---
 HISTORY_FILE = "data/history.csv"
 DATASET_FILE = "data/dataset/dataset.csv"
 
-# --- CUSTOM CSS ---
 st.markdown("""
 <style>
     .stApp { background-color: #0E1117; }
@@ -42,20 +39,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- PERSISTENCE FUNCTIONS ---
-
 def load_history():
-    """Loads history from CSV and ensures safe date parsing."""
     if os.path.exists(HISTORY_FILE):
         try:
             df = pd.read_csv(HISTORY_FILE)
             
-            # 1. Fix missing Source column
             if 'Source' not in df.columns:
                 df['Source'] = 'Manual'
             
-            # 2. Safe Date Conversion (The Fix)
-            # We use utc=True to handle any mixed formats, then strip the TZ info
             df['Date'] = pd.to_datetime(df['Date'], errors='coerce', utc=True)
             df['Date'] = df['Date'].dt.tz_localize(None)
                 
@@ -66,7 +57,6 @@ def load_history():
     return pd.DataFrame(columns=["Date", "Subject", "Snippet", "Prediction", "Confidence", "Source"])
 
 def save_entry(subject, snippet, prediction, confidence, source="Manual", date=None):
-    """Saves a single entry to the unified history file."""
     if date is None:
         date = datetime.now()
         
@@ -79,21 +69,14 @@ def save_entry(subject, snippet, prediction, confidence, source="Manual", date=N
         "Source": source
     }
     
-    # Load current history
     df = load_history()
-    
-    # Create DataFrame for new entry
     new_df = pd.DataFrame([new_entry])
-    
-    # Concatenate
     df = pd.concat([new_df, df], ignore_index=True)
     
-    # Ensure directory exists and save
     os.makedirs("data", exist_ok=True)
     df.to_csv(HISTORY_FILE, index=False)
 
 def import_dataset():
-    """Loads dataset.csv and appends it to the unified history."""
     if not os.path.exists(DATASET_FILE):
         st.error(f"Dataset file not found at {DATASET_FILE}")
         return
@@ -101,12 +84,10 @@ def import_dataset():
     try:
         df_history = load_history()
         
-        # Prevent duplicates
         if not df_history.empty and "Dataset" in df_history['Source'].unique():
             st.warning("Dataset is already added.")
             return
 
-        # Load Dataset
         try:
             df_source = pd.read_csv(DATASET_FILE, encoding='utf-8')
         except:
@@ -115,7 +96,6 @@ def import_dataset():
         if 'v1' in df_source.columns: 
             df_source = df_source.rename(columns={'v1': 'Category', 'v2': 'Message'})
         
-        # Take a sample (e.g., 3000 rows)
         sample_df = df_source.sample(min(len(df_source), 3000), random_state=42)
         
         new_data = []
@@ -126,7 +106,6 @@ def import_dataset():
             pred = "Spam" if "spam" in category else "Ham"
             conf = random.uniform(85, 99) if pred == "Spam" else random.uniform(70, 99)
             
-            # Create fake timestamps
             new_data.append({
                 "Date": base_date - timedelta(days=random.randint(0, 60), minutes=random.randint(0, 1440)),
                 "Subject": "Training Data",
@@ -138,13 +117,11 @@ def import_dataset():
             
         df_new = pd.DataFrame(new_data)
         
-        # Combine
         if not df_history.empty:
             df_final = pd.concat([df_history, df_new], ignore_index=True)
         else:
             df_final = df_new
             
-        # Safe sort
         df_final['Date'] = pd.to_datetime(df_final['Date'], utc=True).dt.tz_localize(None)
         df_final = df_final.sort_values(by="Date", ascending=False)
         
@@ -158,7 +135,6 @@ def import_dataset():
         st.error(f"Error importing dataset: {e}")
 
 def remove_dataset_entries():
-    """Removes rows where Source == 'Dataset'."""
     df = load_history()
     if df.empty: return
 
@@ -174,12 +150,10 @@ def remove_dataset_entries():
         st.rerun()
 
 def clear_all_history():
-    """Deletes history file."""
     if os.path.exists(HISTORY_FILE):
         os.remove(HISTORY_FILE)
         st.rerun()
 
-# --- PIPELINE ---
 @st.cache_resource
 def get_pipeline():
     return PredictionPipeline(load_models=True)
@@ -190,7 +164,6 @@ except Exception as e:
     st.error(f"Critical Error: {e}")
     st.stop()
 
-# --- SIDEBAR ---
 with st.sidebar:
     st.title("🛡️ SpamGuard AI")
     st.markdown("---")
@@ -209,13 +182,9 @@ with st.sidebar:
     if st.button("🗑️ Clear All History", type="primary"):
         clear_all_history()
 
-# --- MAIN APP ---
 st.title("Email Threat Intelligence")
 tabs = st.tabs(["📊 Dashboard", "🔍 Analyze Email", "📂 Batch Processing"])
 
-# ==============================================================================
-# TAB 1: DASHBOARD
-# ==============================================================================
 with tabs[0]:
     df = load_history()
     
@@ -226,14 +195,10 @@ with tabs[0]:
             st.info("👋 **History is Empty**")
             st.write("Use the sidebar buttons to Add Dataset or start analyzing emails.")
     else:
-        # --- SAFE DATE HANDLING ---
-        # Ensure dates are valid and naive (no timezone)
         df['Date'] = pd.to_datetime(df['Date'], errors='coerce', utc=True)
         df['Date'] = df['Date'].dt.tz_localize(None)
         df = df.dropna(subset=['Date']) 
-        # --------------------------
 
-        # Metrics
         total = len(df)
         spam = len(df[df['Prediction'] == 'Spam'])
         safe = len(df[df['Prediction'] == 'Ham'])
@@ -250,7 +215,6 @@ with tabs[0]:
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Charts
         col_L, col_R = st.columns([1, 1])
         with col_L:
             st.markdown("### Threat Distribution")
@@ -278,9 +242,6 @@ with tabs[0]:
             use_container_width=True, hide_index=True
         )
 
-# ==============================================================================
-# TAB 2: SINGLE ANALYSIS
-# ==============================================================================
 with tabs[1]:
     st.markdown("<br>", unsafe_allow_html=True)
     c1, c2 = st.columns([2, 1])
@@ -314,9 +275,6 @@ with tabs[1]:
     with c2:
         st.info("The AI checks for phishing patterns and suspicious keywords.")
 
-# ==============================================================================
-# TAB 3: BATCH PROCESSING
-# ==============================================================================
 with tabs[2]:
     st.markdown("<br>", unsafe_allow_html=True)
     upl = st.file_uploader("Upload .mbox file", type=['mbox', 'txt'])
@@ -332,7 +290,6 @@ with tabs[2]:
             with st.spinner("Processing..."):
                 res_df = pipeline.predict_mbox_file(tmp_path)
                 
-                # --- SAVE BATCH TO UNIFIED HISTORY ---
                 new_rows = []
                 for _, r in res_df.iterrows():
                     new_rows.append({
@@ -348,12 +305,10 @@ with tabs[2]:
                     df_curr = load_history()
                     new_df = pd.DataFrame(new_rows)
                     
-                    # --- CRITICAL FIX FOR ERROR: Force UTC then remove TZ ---
                     new_df['Date'] = pd.to_datetime(new_df['Date'], utc=True).dt.tz_localize(None)
                     
                     df_curr = pd.concat([new_df, df_curr], ignore_index=True)
                     df_curr.to_csv(HISTORY_FILE, index=False)
-                # --------------------------------------------------------
                 
                 st.session_state.last_batch = res_df
                 st.rerun()
