@@ -41,8 +41,22 @@ class DataTransformation:
             
             logger.info(f"Train/test split completed. Train size: {len(X_train)}, Test size: {len(X_test)}")
             
+            # Clean text data
+            import re
+            def clean_text(text):
+                text = str(text).lower()
+                text = re.sub(r'[^a-zA-Z\s]', '', text)
+                return text
+            
+            X_train = X_train.apply(clean_text)
+            X_test = X_test.apply(clean_text)
+            
             # Apply TF-IDF vectorization
-            tfidf_vectorizer = TfidfVectorizer(lowercase=True, stop_words='english')
+            tfidf_vectorizer = TfidfVectorizer(
+                lowercase=True, 
+                stop_words='english',
+                max_features=5000  # Limit features for efficiency
+            )
             X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
             X_test_tfidf = tfidf_vectorizer.transform(X_test)
             

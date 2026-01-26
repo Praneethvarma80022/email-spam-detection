@@ -5,8 +5,8 @@ class Config:
     training_data_path: str = "data/dataset/dataset.csv"
     validation_data_path: str = "data/dataset/All_mail_Including_Spam_and_Trash.mbox"
     OUTPUT_BASE_DIR: str = "outputs"
-    model_path: str = "outputs/2025-12-25_14-02-05/models/SVM_model.pkl"
-    feature_path: str = "outputs/2025-12-25_14-02-05/models/vectorizer.pkl"
+    model_path: str = "outputs/2026-01-27_02-22-15/models/SVM_model.pkl"
+    feature_path: str = "outputs/2026-01-27_02-22-15/models/vectorizer.pkl"
 
 class ModelConfig:
     models = {
@@ -37,5 +37,15 @@ class ModelConfig:
             'min_samples_split': [2, 5, 10],
             'min_samples_leaf': [1, 2, 4],
             'max_features': ['sqrt', 'log2']
+        },
+        'MultinomialNB': {
+            'alpha': [0.1, 0.5, 1.0, 5.0, 10.0],
+            'fit_prior': [True, False]
+        },
+        'XGBoost': {
+            'learning_rate': [0.01, 0.1, 0.2],
+            'max_depth': [3, 6, 10],
+            'n_estimators': [100, 200, 300],
+            'subsample': [0.8, 1.0]
         }
     }

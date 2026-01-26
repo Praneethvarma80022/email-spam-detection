@@ -289,8 +289,21 @@ with tabs[1]:
         if st.session_state.last_scan:
             res = st.session_state.last_scan
             st.markdown("---")
-            if res['p'] == "Spam": st.error(f"🚨 SPAM DETECTED ({res['c']:.1f}%)")
-            else: st.success(f"✅ SAFE EMAIL ({res['c']:.1f}%)")
+            st.markdown("### Prediction Results")
+            
+            # Display Prediction Label
+            if res['p'] == "Spam":
+                st.error(f"🚨 **Class**: {res['p']}")
+            else:
+                st.success(f"✅ **Class**: {res['p']}")
+            
+            # Display Confidence Score and Progress Bar
+            st.markdown(f"**Confidence Score**: {res['c']:.1f}%")
+            st.progress(res['c'] / 100)
+            
+            # Low Confidence Warning
+            if res['c'] < 50:
+                st.warning("⚠️ **Low Confidence Warning**: The prediction confidence is below 50%. Results may be inaccurate.")
 
     with c2: st.info("The AI checks for phishing patterns and suspicious keywords.")
 
