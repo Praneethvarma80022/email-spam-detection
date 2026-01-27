@@ -285,18 +285,36 @@ with tabs[1]:
                 color_discrete_map={"Spam": "#FF4B4B", "Ham": "#00CC96"}
             )
             bar_fig.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
-            bar_fig.update_layout(height=220, showlegend=False)
+            bar_fig.update_layout(
+                height=300,
+                margin=dict(l=20, r=20, t=40, b=20),
+                showlegend=False
+            )
+
             st.plotly_chart(bar_fig, use_container_width=True)
 
             gauge_fig = go.Figure(go.Pie(
+                labels=["Confidence", "Remaining"],
                 values=[r["conf"], 100 - r["conf"]],
-                hole=0.7,
+                hole=0.65,
+                sort=False,
+                textinfo="percent",
+                textposition="inside",
+                insidetextorientation="radial",
                 marker_colors=[
                     "#00CC96" if r["pred"] == "Ham" else "#FF4B4B",
                     "#161B22"
                 ]
             ))
-            gauge_fig.update_layout(height=200, showlegend=False)
+
+            gauge_fig.update_layout(
+                height=320,
+                margin=dict(l=0, r=0, t=10, b=10),
+                showlegend=False,
+                font=dict(color="white", size=14)
+            )
+
+
             st.plotly_chart(gauge_fig, use_container_width=True)
 # --- TAB 2 & 3: BATCH & LOGS ---
 with tabs[2]:
