@@ -1,8 +1,20 @@
-
-# 📧 Spam Email Detection System using Machine Learning
+## 📧 Spam Email Detection System using Machine Learning
 
 A **production-grade machine learning system** designed to accurately classify emails as **Spam** or **Ham (legitimate)**.
 The project follows a **modular pipeline architecture** for training and prediction and includes an **interactive Streamlit web application** for real-time usage.
+
+---
+
+## 🌐 Live Demo
+
+🚀 **Try the deployed application here:**
+👉 **[https://email-spam-detection-batch-b.streamlit.app/](https://email-spam-detection-batch-b.streamlit.app/)**
+
+The web app supports:
+
+* **Single Email Classification**
+* **Batch `.mbox` Email Processing**
+* Instant predictions using the trained ML model
 
 ---
 
@@ -48,7 +60,6 @@ The system is trained on a subset of the **Enron Email Dataset**, one of the mos
 | Dataset              | Enron Email Dataset |
 | Version Control      | Git & GitHub        |
 
----
 
 ## 📂 Project Structure
 
